@@ -1,10 +1,15 @@
-lowdefy: 3.21.2
+lowdefy: 4.0.0-rc.0
 name: Lowdefy Strava Activities
 
-types:
-  AgGridAlpine:
-    url: https://blocks-cdn.lowdefy.com/v3.12.3/blocks-aggrid/meta/AgGridAlpine.json
-
+auth:
+  providers:
+    - id: strava
+      type: StravaProvider
+      properties:
+        clientId:
+          _secret: STRAVA_CLIENT_ID
+        clientSecret:
+          _secret: STRAVA_CLIENT_SECRET
 connections:
   - id: strava-api
     type: AxiosHttp
@@ -13,6 +18,10 @@ connections:
       headers:
         Authorization:
           _secret: STRAVA_ACCESS_TOKEN
+  - id: strava-oauth
+    type: AxiosHttp
+    properties:
+      baseURL: https://www.strava.com/oauth
   - id: strava-activities
     type: MongoDBCollection
     properties:
@@ -41,12 +50,18 @@ pages:
             api:
               per_page: 10
               page: 1
-      onEnter:
-        - id: fetch-activities
-          type: Request
-          params:
-            - fetch-activities
+      # onMount:
+      #   - id: fetch-activities
+      #     type: Request
+      #     params:
+      #       - fetch-activities
     requests:
+      - id: authenticate
+        type: AxiosHttp
+        connectionId: strava-oauth
+        properties:
+          method: get
+          url: /authorize?client_id=71359&redirect_uri=http://localhost:3000&response_type=code&approval_prompt=auto&scope=activity:read_all
       - id: get-athlete
         type: AxiosHttp
         connectionId: strava-api
@@ -56,17 +71,27 @@ pages:
       - id: get-athlete-activities
         type: AxiosHttp
         connectionId: strava-api
+        payload:
+          api:
+            _state: api
         properties:
           method: get
           url:
             _log:
-              _nunjucks: '/athlete/activities?per_page={{ api.per_page }}&page={{ api.page }}'
+              _nunjucks:
+                template: '/athlete/activities?per_page={{ api.per_page }}&page={{ api.page }}'
+                on:
+                  api:
+                    _payload: api
       - id: insert-activities-temp
         type: MongoDBInsertMany
         connectionId: strava-activities-temp
+        payload:
+          activities:
+            _state: activities
         properties:
           docs:
-            _state: activities
+            _payload: activities
       - id: merge-activities
         type: MongoDBAggregation
         connectionId: strava-activities-temp
@@ -103,6 +128,23 @@ pages:
             style:
               maxWidth: 1000
             blocks:
+              - id: strava_0auth
+                type: Button
+                events:
+                  onClick:
+                    - id: auth
+                      type: Request
+                      params: authenticate
+              - id: strava_login
+                type: Button
+                events:
+                  onClick:
+                    - id: login
+                      type: Login
+                      params:
+                        providerId: strava
+                        callbackUrl:
+                          pageId: welcome
               - id: api.per_page
                 type: NumberInput
                 layout:
