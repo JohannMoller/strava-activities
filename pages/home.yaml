@@ -1,0 +1,20 @@
+id: home
+type: Box
+properties:
+  title: Welcome
+blocks:
+  - id: content_card
+    type: Card
+    style:
+      maxWidth: 1000
+    blocks:
+      - id: strava_0auth
+        type: Button
+        properties:
+          title: AUTH
+        events:
+          onClick:
+            - id: auth_link
+              type: Link
+              params:
+                url: https://www.strava.com/oauth/authorize?client_id=71359&redirect_uri=http://localhost:3000/authenticated&response_type=code&approval_prompt=auto&scope=activity:read_all

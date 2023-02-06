@@ -1,0 +1,183 @@
+id: report
+type: PageHeaderMenu
+properties:
+  title: Welcome
+events:
+  onMount:
+    - id: set-state
+      type: SetState
+      params:
+        api:
+          per_page: 10
+          page: 1
+    - id: fetch-activities
+      type: Request
+      params:
+        - fetch-activities
+requests:
+  - id: get-athlete
+    type: AxiosHttp
+    connectionId: strava-api
+    payload:
+      access_token:
+        _global: access_token
+    properties:
+      method: get
+      url: /athlete
+  - id: get-athlete-activities
+    type: AxiosHttp
+    connectionId: strava-api
+    payload:
+      access_token:
+        _global: access_token
+      api:
+        _state: api
+    properties:
+      method: get
+      url:
+        _nunjucks:
+          template: '/athlete/activities?per_page={{ api.per_page }}&page={{ api.page }}'
+          on:
+            api:
+              _payload: api
+  - id: insert-activities-temp
+    type: MongoDBInsertMany
+    connectionId: strava-activities-temp
+    payload:
+      activities:
+        _state: activities
+    properties:
+      docs:
+        _payload: activities
+  - id: merge-activities
+    type: MongoDBAggregation
+    connectionId: strava-activities-temp
+    properties:
+      pipeline:
+        - $addFields:
+            _id: $id
+        - $merge:
+            into: activities
+            on: _id
+            whenMatched: merge
+            whenNotMatched: insert
+  - id: clear-activities-temp
+    type: MongoDBDeleteMany
+    connectionId: strava-activities-temp
+    properties:
+      filter: {}
+  - id: fetch-activities
+    type: MongoDBFind
+    connectionId: strava-activities
+    properties:
+      query: {}
+      options:
+        sort:
+          - - start_date
+            - -1
+
+blocks:
+  - id: content_card
+    type: Card
+    style:
+      maxWidth: 1000
+    layout:
+      contentGutter: 8
+    blocks:
+      - id: api.per_page
+        type: NumberInput
+        layout:
+          flex: 0 1 auto
+        properties:
+          title: 'Total'
+          label:
+            inline: true
+      - id: api.page
+        type: NumberInput
+        layout:
+          flex: 0 1 auto
+        properties:
+          title: 'Page'
+          label:
+            inline: true
+      - id: get-athlete-activities
+        type: Button
+        layout:
+          flex: 1 1 auto
+        properties:
+          title: Get activities
+          icon: AiOutlineApi
+        events:
+          onClick:
+            - id: get-athlete-activities
+              type: Request
+              params: get-athlete-activities
+            - id: set-state
+              type: SetState
+              params:
+                activities:
+                  _request: get-athlete-activities.data
+                api.page:
+                  _sum:
+                    - _state: api.page
+                    - 1
+      - id: insert-activities
+        type: Button
+        layout:
+          flex: 1 1 auto
+        properties:
+          title: Save activities
+          icon: AiOutlineSave
+        events:
+          onClick:
+            - id: insert-activities-temp
+              type: Request
+              params: insert-activities-temp
+            - id: merge-activities
+              type: Request
+              params: merge-activities
+            - id: clear-activities-temp
+              type: Request
+              params: clear-activities-temp
+      - id: fetch-activities
+        type: Button
+        layout:
+          flex: 1 1 auto
+        properties:
+          title: Fetch activities
+          icon: AiOutlineReload
+        events:
+          onClick:
+            - id: fetch-activities
+              type: Request
+              params: fetch-activities
+
+      - id: activities-list
+        type: AgGridAlpine
+        properties:
+          rowData:
+            _request: fetch-activities
+          pagination: true
+          defaultColDef:
+            sortable: true
+            resizable: true
+            filter: true
+          columnDefs:
+            - headerName: Type
+              field: type
+            - headerName: Name
+              field: name
+            - headerName: Date
+              field: start_date
+            - headerName: Distance
+              field: distance
+            - headerName: Moving time
+              field: moving_time
+            - headerName: Average speed
+              field: average_speed # *0.06 to get km/min
+            - headerName: Average heart rate
+              field: average_heartrate
+            - headerName: Average cadence
+              field: average_cadence
+            - headerName: Elevation gain
+              field: total_elevation_gain
