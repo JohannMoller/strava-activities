@@ -1,0 +1,16 @@
+id: merge-activities
+type: MongoDBAggregation
+connectionId: strava-activities-temp
+properties:
+  pipeline:
+    - $addFields:
+        _id: $id
+        start_date:
+          $toDate: $start_date
+        start_date_local:
+          $toDate: $start_date_local
+    - $merge:
+        into: activities
+        on: _id
+        whenMatched: merge
+        whenNotMatched: insert

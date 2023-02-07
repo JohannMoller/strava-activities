@@ -1,0 +1,9 @@
+id: get-athlete
+type: AxiosHttp
+connectionId: strava-api
+payload:
+  access_token:
+    _global: access_token
+properties:
+  method: get
+  url: /athlete

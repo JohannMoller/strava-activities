@@ -1,0 +1,11 @@
+id: fetch-activities
+type: MongoDBAggregation
+connectionId: strava-activities
+payload:
+  filter:
+    _state: filter
+properties:
+  pipeline:
+    - _ref: pages/report/requests/stages/filter_match.yaml
+    - $sort:
+        start_date: -1

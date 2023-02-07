@@ -1,0 +1,5 @@
+id: clear-activities-temp
+type: MongoDBDeleteMany
+connectionId: strava-activities-temp
+properties:
+  filter: {}

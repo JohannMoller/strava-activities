@@ -1,0 +1,9 @@
+id: insert-activities-temp
+type: MongoDBInsertMany
+connectionId: strava-activities-temp
+payload:
+  activities:
+    _state: activities
+properties:
+  docs:
+    _payload: activities

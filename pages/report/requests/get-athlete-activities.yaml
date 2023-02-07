@@ -1,0 +1,16 @@
+id: get-athlete-activities
+type: AxiosHttp
+connectionId: strava-api
+payload:
+  access_token:
+    _global: access_token
+  api:
+    _state: api
+properties:
+  method: get
+  url:
+    _nunjucks:
+      template: '/athlete/activities?per_page={{ api.per_page }}&page={{ api.page }}'
+      on:
+        api:
+          _payload: api

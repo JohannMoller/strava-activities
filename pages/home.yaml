@@ -1,17 +1,28 @@
 id: home
-type: Box
+type: PageHeaderMenu
+layout:
+  contentJustify: center
 properties:
   title: Welcome
 blocks:
   - id: content_card
     type: Card
     style:
-      maxWidth: 1000
+      maxWidth: 800
+    layout:
+      contentJustify: center
     blocks:
+      - id: title
+        type: Title
+        properties:
+          content: Please click here to authenticate the app
+          level: 3
       - id: strava_0auth
         type: Button
+        layout:
+          flex: 0 1 auto
         properties:
-          title: AUTH
+          title: Authenticate
         events:
           onClick:
             - id: auth_link
