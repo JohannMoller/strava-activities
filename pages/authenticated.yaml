@@ -1,0 +1,35 @@
+id: authenticated
+type: Box
+requests:
+  - id: authorize
+    type: AxiosHttp
+    connectionId: strava-oauth
+    payload:
+      code:
+        _url_query: code
+    properties:
+      method: post
+      url:
+        _nunjucks:
+          template: '/token?client_id={{client_id}}&client_secret={{client_secret}}&code={{code}}&grant_type=authorization_code'
+          on:
+            client_id:
+              _secret: STRAVA_CLIENT_ID
+            client_secret:
+              _secret: STRAVA_CLIENT_SECRET
+            code:
+              _payload: code
+events:
+  onMount:
+    - id: authorize
+      type: Request
+      params: authorize
+    - id: set_access_token
+      type: SetGlobal
+      params:
+        access_token:
+          _request: authorize.data.access_token
+    - id: link
+      type: Link
+      params:
+        pageId: report
