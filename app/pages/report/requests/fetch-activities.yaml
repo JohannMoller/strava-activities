@@ -6,6 +6,6 @@ payload:
     _state: filter
 properties:
   pipeline:
-    - _ref: pages/report/requests/stages/filter_match.yaml
+    - _ref: pages/report/requests/stages/filter-match.yaml
     - $sort:
         start_date: -1

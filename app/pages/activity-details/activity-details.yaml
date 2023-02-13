@@ -1,0 +1,80 @@
+id: activity-details
+type: PageHeaderMenu
+properties:
+  content:
+    style:
+      background: '#fff'
+events:
+  onMount:
+    - id: fetch-activity
+      type: Request
+      params: fetch-activity
+    - id: set-state
+      type: SetState
+      params:
+        activity:
+          _request: fetch-activity.0
+        test:
+          _polyline.decode:
+            on:
+              _request: fetch-activity.0.map.summary_polyline
+        test2:
+          _polyline.toGeoJSON:
+            on:
+              _request: fetch-activity.0.map.summary_polyline
+        markers:
+          _array.map:
+            - _polyline.decode:
+                on:
+                  _request: fetch-activity.0.map.summary_polyline
+            - _function:
+                # icon: 'http://localhost:3000/dot.png'
+                position:
+                  lat:
+                    __args: '0.0'
+                  lng:
+                    __args: '0.1'
+
+requests:
+  - _ref: pages/activity-details/requests/fetch-activity.yaml
+
+blocks:
+  - id: google_maps_script_2
+    type: GoogleMapsScript
+    properties:
+      apiKey:
+        _build.env: GOOGLE_MAPS_API_KEY
+    blocks:
+      - id: google_maps_2
+        type: GoogleMaps
+        properties:
+          map:
+            options:
+              panControl: true
+              zoomControl: true
+              fullscreenControl: true
+          markers:
+            _state: markers
+  - id: title
+    type: Html
+    properties:
+      html:
+        _nunjucks:
+          template: |
+            <h2>{{ name }}</h2>
+            <h3>{{ start_date_local | date('lll') }}</h3>
+          on:
+            _state: activity
+  - id: details
+    type: Descriptions
+    properties:
+      bordered: true
+      column: 2
+      size: small
+      items:
+        _change_case.capitalCase:
+          on:
+            _state: activity
+          options:
+            convertValues: false
+            convertKeys: true

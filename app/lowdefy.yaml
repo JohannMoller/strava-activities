@@ -1,6 +1,6 @@
 lowdefy: 4.0.0-rc.0
 name: Lowdefy Strava Activities
-
+# <a href="https://www.flaticon.com/free-icons/dot" title="dot icons">Dot icons created by Md Tanvirul Haque - Flaticon</a>
 auth:
   providers:
     - id: strava
@@ -10,6 +10,12 @@ auth:
           _secret: STRAVA_CLIENT_ID
         clientSecret:
           _secret: STRAVA_CLIENT_SECRET
+plugins:
+  - name: '@johannmoller/plugin-all'
+    version: 'workspace:*'
+  - name: '@johann/blocks-echarts'
+    version: 'workspace:*'
+
 connections:
   - id: strava-api
     type: AxiosHttp
@@ -43,3 +49,4 @@ pages:
   - _ref: pages/home.yaml
   - _ref: pages/authenticated.yaml
   - _ref: pages/report/report.yaml
+  - _ref: pages/activity-details/activity-details.yaml

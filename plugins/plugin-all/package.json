@@ -1,0 +1,29 @@
+{
+  "name": "@johannmoller/plugin-all",
+  "version": "0.0.0",
+  "license": "UNLICENSED",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./operators/client": "./dist/operatorsClient.js",
+    "./operators/server": "./dist/operatorsServer.js",
+    "./types": "./dist/types.js"
+  },
+  "files": [
+    "dist/*"
+  ],
+  "scripts": {
+    "build": "swc src --out-dir dist --config-file ../../.swcrc --delete-dir-on-start --copy-files",
+    "clean": "rm -rf dist",
+    "prepare": "pnpm build"
+  },
+  "devDependencies": {
+    "@swc/cli": "0.1.57",
+    "@swc/core": "1.2.194"
+  },
+  "dependencies": {
+    "@googlemaps/polyline-codec": "1.0.28",
+    "@lowdefy/operators": "4.0.0-rc.0",
+    "@mapbox/polyline": "1.1.1"
+  }
+}

@@ -1,0 +1,64 @@
+id: activities-by-month-chart
+type: EChart
+properties:
+  height: 500
+  option:
+    dataset:
+      source:
+        _request: activities-by-month
+    tooltip:
+      trigger: axis
+    legend:
+      top: 0
+      show: true
+    dataZoom:
+      - type: slider
+    xAxis:
+      type: time
+      axisPointer:
+        type: line
+        snap: true
+    yAxis:
+      - name: 'Distance [km]'
+        type: 'value'
+        nameLocation: middle
+        nameGap: 30
+        min: 0
+      - name: 'Count'
+        type: 'value'
+        nameLocation: middle
+        nameGap: 50
+        min: 0
+    series:
+      - type: bar
+        name: Total Distance
+        yAxisIndex: 0
+        symbol: none
+        barMaxWidth: 20
+        emphasis:
+          focus: 'series'
+        lineStyle:
+          width: 0
+        encode:
+          x: _id
+          y: total_distance_km
+      - type: line
+        name: Average Distance
+        yAxisIndex: 0
+        symbol: none
+        barMaxWidth: 20
+        emphasis:
+          focus: 'series'
+        encode:
+          x: _id
+          y: average_distance_km
+      - type: line
+        name: Number of activites
+        yAxisIndex: 1
+        emphasis:
+          focus: 'series'
+        lineStyle:
+          width: 0
+        encode:
+          x: _id
+          y: count

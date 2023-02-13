@@ -1,0 +1,28 @@
+id: fetch-activity
+type: MongoDBAggregation
+connectionId: strava-activities
+payload:
+  _id:
+    _url_query: _id
+properties:
+  pipeline:
+    - $match:
+        _id:
+          _payload: _id
+    - $project:
+        average_cadence: 1
+        average_heartrate: 1
+        average_speed: 1
+        distance: 1
+        elapsed_time: 1
+        elev_high: 1
+        elev_low: 1
+        max_heartrate: 1
+        max_speed: 1
+        moving_time: 1
+        name: 1
+        start_date: 1
+        start_date_local: 1
+        total_elevation_gain: 1
+        type: 1
+        map: 1

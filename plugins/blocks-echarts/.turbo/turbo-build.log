@@ -1,0 +1,9 @@
+
+> @lowdefy/blocks-echarts@4.0.0-rc.0 build /Users/johannmoller/Projects/Lowdefy/Github/lowdefy/packages/plugins/blocks/blocks-echarts
+> swc src --out-dir dist --config-file ../../../../.swcrc --delete-dir-on-start && pnpm copyfiles
+
+Successfully compiled: 3 files with swc (42.2ms)
+
+> @lowdefy/blocks-echarts@4.0.0-rc.0 copyfiles /Users/johannmoller/Projects/Lowdefy/Github/lowdefy/packages/plugins/blocks/blocks-echarts
+> copyfiles -u 1 "./src/**/*" dist -e "./src/**/*.js" -e "./src/**/*.yaml" -e "./src/**/*.snap"
+

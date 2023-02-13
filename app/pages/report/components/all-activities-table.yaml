@@ -1,0 +1,38 @@
+id: all-activities-tables
+type: AgGridAlpine
+events:
+  onRowClick:
+    - id: link-details
+      type: Link
+      params:
+        pageId: activity-details
+        urlQuery:
+          _id:
+            _event: row._id
+properties:
+  rowData:
+    _request: fetch-activities
+  pagination: true
+  defaultColDef:
+    sortable: true
+    resizable: true
+    filter: true
+  columnDefs:
+    - headerName: Type
+      field: type
+    - headerName: Name
+      field: name
+    - headerName: Date
+      field: start_date
+    - headerName: Distance
+      field: distance
+    - headerName: Moving time
+      field: moving_time
+    - headerName: Average speed
+      field: average_speed # *0.06 to get km/min
+    - headerName: Average heart rate
+      field: average_heartrate
+    - headerName: Average cadence
+      field: average_cadence
+    - headerName: Elevation gain
+      field: total_elevation_gain

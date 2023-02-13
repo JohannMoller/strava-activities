@@ -1,0 +1,60 @@
+id: activities-by-month
+type: MongoDBAggregation
+connectionId: strava-activities
+payload:
+  filter:
+    _state: filter
+properties:
+  pipeline:
+    - _ref: pages/report/requests/stages/filter-match.yaml
+    - $group:
+        _id:
+          $dateFromParts:
+            year:
+              $year: $start_date
+            month:
+              $month: $start_date
+        count:
+          $sum: 1
+        total_distance:
+          $sum: $distance
+        total_time:
+          $sum: $moving_time
+        total_elevation_gain:
+          $sum: $total_elevation_gain
+
+        average_distance:
+          $avg: $distance
+        average_time:
+          $avg: $moving_time
+        average_elevation_gain:
+          $avg: $total_elevation_gain
+        average_heartrate:
+          $avg: $average_heartrate
+        average_speed:
+          $avg: $average_speed
+    - $addFields:
+        total_distance_km:
+          $divide:
+            - $total_distance
+            - 1000
+        total_time_hour:
+          $divide:
+            - $total_time
+            - 3600
+
+        average_distance_km:
+          $divide:
+            - $average_distance
+            - 1000
+
+        average_time_minutes:
+          $divide:
+            - $average_time
+            - 60
+        average_speed_min_km:
+          $divide:
+            - 16.666666666667
+            - $average_speed
+    - $sort:
+        _id: 1

@@ -6,9 +6,7 @@ $match:
           - _payload: filter.activity_types
       - $gte:
           - $start_date
-          - _log:
-              _payload: filter.dates.0
+          - _payload: filter.dates.0
       - $lte:
           - $start_date
-          - _log:
-              _payload: filter.dates.1
+          - _payload: filter.dates.1
